@@ -1,0 +1,5 @@
+type Handler<T> = { action: (arg1: T) => void, caller: any }
+
+export class Event<T> {
+    private _handlers=[];private _onceHandlers=[];public subscribe(a,b){if(this._onceHandlers.find(c=>this.same(c,a,b)))throw new Error("Error in Event.subscribe(). Already subscribed once");this._handlers.find(c=>this.same(c,a,b))||this._handlers.push({action:a,caller:b})}public subscribeOnce(a,b){if(this._handlers.find(c=>this.same(c,a,b)))throw new Error("Error in Event.subscribeOnce(). Already subscribed");this._onceHandlers.find(c=>this.same(c,a,b))||this._onceHandlers.push({action:a,caller:b})}public unsubscribe(a,b){const c=this._handlers.findIndex(c=>this.same(c,a,b));-1!=c&&this._handlers.splice(c,1);const d=this._onceHandlers.findIndex(c=>this.same(c,a,b));-1!=d&&this._onceHandlers.splice(d,1)}public invoke(a){const b=[...this._handlers];b.forEach(b=>{b.action.call(b.caller,a)});const c=[...this._onceHandlers];c.forEach(b=>b.action.call(b.caller,a)),this._onceHandlers=[]}private same(a,b,c){return a.action==b&&a.caller==c}
+}
